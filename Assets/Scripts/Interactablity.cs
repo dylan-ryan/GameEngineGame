@@ -6,24 +6,25 @@ using TMPro;
 
 public class Interactablity : MonoBehaviour
 {
-    [Header ("Text Stuff")]
+    [Header("Text Stuff")]
     public string message;
     public TextMeshProUGUI infoText;
+    public Dialogue[] dialogues;
 
-    public enum Interaction {Info, Log, Mushroom, Honey, Water, Dialog}
-    [Header ("Enum Stuff")]
+    public enum Interaction { Info, Log, Mushroom, Honey, Water, Dialog }
+    [Header("Enum Stuff")]
     public Interaction interaction;
+    public DialogManager dialogManager;
 
     public void Start()
     {
         infoText = GameObject.Find("InfoText").GetComponent<TextMeshProUGUI>();
+        dialogManager = FindObjectOfType<DialogManager>();
     }
 
     public void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space)) 
-        {
-        }
+
     }
 
     public void InfoText()
@@ -50,7 +51,22 @@ public class Interactablity : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
+    public void HoneyInteraction()
+    {
+        this.gameObject.SetActive(false);
+    }
+
+    public void WaterInteraction()
+    {
+        this.gameObject.SetActive(false);
+    }
+
     public void DialogInteraction()
     {
+        PlayerInteraction playerInteraction = FindObjectOfType<PlayerInteraction>();
+        if (playerInteraction != null)
+        {
+            playerInteraction.StartDialogueInteraction(dialogues);
+        }
     }
 }

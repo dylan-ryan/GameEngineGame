@@ -6,37 +6,48 @@ using static Interactablity;
 public class PlayerInteraction : MonoBehaviour
 {
     public GameObject currentInteractable;
-
     public Interactablity currentInteractableScript;
-
-    void Start()
-    {
-    }
+    private bool inDialogue = false;
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E) && currentInteractable != null)
+        if (Input.GetKeyDown(KeyCode.E) && currentInteractable != null)
         {
-            if (currentInteractable.GetComponent<Interactablity>().interaction == Interaction.Info)
+            switch (currentInteractableScript.interaction)
             {
-                currentInteractableScript.InfoText();
-            }
-            if (currentInteractable.GetComponent<Interactablity>().interaction == Interaction.Log)
-            {
-                currentInteractableScript.LogInteraction();
-                Debug.Log("Coin");
-            }
-            else if (currentInteractable.GetComponent<Interactablity>().interaction == Interaction.Mushroom)
-            {
-                currentInteractableScript.MushroomInteraction();
-                Debug.Log("Gem");
+                case Interaction.Info:
+                    currentInteractableScript.InfoText();
+                    Debug.Log("Sign");
+                    break;
+                case Interaction.Log:
+                    currentInteractableScript.LogInteraction();
+                    Debug.Log("Log");
+                    break;
+                case Interaction.Mushroom:
+                    currentInteractableScript.MushroomInteraction();
+                    Debug.Log("Mushroom");
+                    break;
+                case Interaction.Honey:
+                    currentInteractableScript.HoneyInteraction();
+                    Debug.Log("Honey");
+                    break;
+                case Interaction.Water:
+                    currentInteractableScript.WaterInteraction();
+                    Debug.Log("Water");
+                    break;
+                case Interaction.Dialog:
+                    StartDialogueInteraction(currentInteractableScript.dialogues);
+                    break;
             }
         }
     }
-
-    public void DoInteraction()
+    public void StartDialogueInteraction(Dialogue[] dialogues)
     {
-
+        if (!inDialogue)
+        {
+            inDialogue = true;
+            FindObjectOfType<DialogManager>().StartDialogue(dialogues);
+        }
     }
 
     public void OnTriggerStay2D(Collider2D other)

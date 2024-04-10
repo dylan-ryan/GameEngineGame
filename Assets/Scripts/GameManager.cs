@@ -8,7 +8,7 @@ using UnityEngine.TextCore.Text;
 
 public class GameManager : MonoBehaviour
 {
-    private CharacterController2D characterController2D;
+    private PlayerMovement_2D playerMovement_2D;
     private UIManager uiManager;
     public LevelManager levelManager;
 
@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     {
         character.transform.position = GameObject.FindGameObjectWithTag("SpawnPoint").transform.position;
         characterArt = character.GetComponent<SpriteRenderer>();
-        characterController2D = GetComponent<CharacterController2D>();
+        playerMovement_2D = GetComponent<PlayerMovement_2D>();
         uiManager = GetComponent<UIManager>();
         levelManager = GetComponent<LevelManager>();
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -70,21 +70,21 @@ public class GameManager : MonoBehaviour
     {
         uiManager.ManagerMainMenuUI();
         characterArt.enabled = false;
-        character.GetComponent<CharacterController2D>().enabled = false;
+        character.GetComponent<PlayerMovement_2D>().enabled = false;
 
     }
 
     public void PauseUI()
     {     
         uiManager.ManagerPauseUI();
-        character.GetComponent<CharacterController2D>().enabled = false;
+        character.GetComponent<PlayerMovement_2D>().enabled = false;
     }
 
     public void GameplayUI()
     {
         uiManager.ManagerGameplayUI();
         characterArt.enabled = true;
-        character.GetComponent<CharacterController2D>().enabled = true;
+        character.GetComponent<PlayerMovement_2D>().enabled = true;
 
     }
 
@@ -92,19 +92,19 @@ public class GameManager : MonoBehaviour
     {
         uiManager.ManagerGameWinUI();
         characterArt.enabled = false;
-        character.GetComponent<CharacterController2D>().enabled = false;
+        character.GetComponent<PlayerMovement_2D>().enabled = false;
     }
 
     public void GameOverUI()
     {
         uiManager.ManagerGameOverUI();
         characterArt.enabled = false;
-        character.GetComponent<CharacterController2D>().enabled = false;
+        character.GetComponent<PlayerMovement_2D>().enabled = false;
     }
 
     public void OptionsUI()
     {
         uiManager.ManagerOptionsUI();
-        character.GetComponent<CharacterController2D>().enabled = false;
+        character.GetComponent<PlayerMovement_2D>().enabled = false;
     }
 }
