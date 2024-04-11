@@ -5,7 +5,6 @@ using UnityEngine;
 public class Singleton : MonoBehaviour
 {
     static Singleton instance;
-    // Start is called before the first frame update
     public void Start()
     {
         if (instance != null)

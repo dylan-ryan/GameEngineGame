@@ -45,7 +45,7 @@ public class PlayerInteraction : MonoBehaviour
                     Debug.Log("Water");
                     break;
                 case Interaction.Dialog:
-                    currentInteractableScript.dialogManager.StartDialogue();
+                    currentInteractableScript.StartDialogueInteraction();
                     break;
             }
         }
@@ -66,10 +66,10 @@ public class PlayerInteraction : MonoBehaviour
         mushroomsCollected++;
         if (mushroomsCollected >= 2)
         {
-            DialogManager questManager = mushroomQuest.GetComponent<DialogManager>();
-            if (questManager != null)
+            DialogManager dialogManager = mushroomQuest.GetComponent<DialogManager>();
+            if (dialogManager != null)
             {
-                questManager.currentQuestStage = DialogManager.QuestStage.QuestEnd;
+                dialogManager.currentQuestStage = DialogManager.QuestStage.QuestEnd;
             }
             else
             {

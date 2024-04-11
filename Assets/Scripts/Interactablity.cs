@@ -9,7 +9,6 @@ public class Interactablity : MonoBehaviour
     [Header("Text Stuff")]
     public string message;
     public TextMeshProUGUI infoText;
-    //public Dialogue[] dialogues;
 
     private PlayerInteraction playerInteraction;
 

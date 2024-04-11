@@ -85,10 +85,10 @@ public class DialogManager : MonoBehaviour
 
         if (dialogueQueue.Count == 0)
         {
+            gameObject.GetComponent<Collider2D>().enabled = true;
             EndDialogue();
         }
     }
-
 
     private void DisplayNextLine()
     {
@@ -96,7 +96,6 @@ public class DialogManager : MonoBehaviour
         speakerNameText.text = currentDialogue.speakerName;
         dialogueText.text = currentDialogue.text;
     }
-
 
     public void EndDialogue()
     {
@@ -113,7 +112,6 @@ public class DialogManager : MonoBehaviour
             Debug.LogWarning("Unknown quest stage or already at the end.");
         }
         dialogueActive = false;
-        playerInteraction.currentInteractable.GetComponent<Collider2D>().enabled = true;
         speakerNameText.text = "";
         dialogueText.text = "";
         Debug.Log("Dialogue ended");
