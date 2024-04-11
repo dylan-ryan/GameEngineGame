@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,80 +7,131 @@ public class DialogManager : MonoBehaviour
 {
     public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
+    public GameObject thisGameObject;
+    // Remove public QuestManager questManager;
+
+    public Dialogue[] questStartDialogues;
+    public Dialogue[] questMiddleDialogues;
+    public Dialogue[] questEndDialogues;
 
     private Queue<Dialogue> dialogueQueue = new Queue<Dialogue>();
-    private Dialogue[] originalDialogue;
     public PlayerInteraction playerInteraction;
     public PlayerMovement_2D playerController;
-
     private bool dialogueActive = false;
 
-    public void StartDialogue(Dialogue[] dialogue)
+    public void Start()
     {
-        if (dialogue == null || dialogue.Length == 0)
+    }
+
+    public void StartDialogue(QuestManager.QuestStage questStage, Dialogue[] dialogues)
+    {
+        QuestManager questManager = thisGameObject.GetComponent<QuestManager>();
+
+        if (questManager == null)
         {
+            Debug.LogError("QuestManager not found in the scene.");
             return;
         }
+
         dialogueActive = true;
-        originalDialogue = dialogue;
-        dialogueQueue.Clear();
-        foreach (Dialogue d in dialogue)
+        questManager.SetCurrentQuestStage(questStage);
+
+        StartCoroutine(WaitForPlayerInput(dialogues));
+    }
+
+    private IEnumerator WaitForPlayerInput(Dialogue[] dialogues)
+    {
+        foreach (Dialogue d in dialogues)
         {
             dialogueQueue.Enqueue(d);
         }
-        DisplayNextLine();
 
-        if (playerController != null)
+        while (dialogueQueue.Count > 0)
         {
-            playerController.enabled = false;
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                DisplayNextLine();
+            }
+            yield return null;
         }
+        EndDialogue(thisGameObject.GetComponent<QuestManager>());
     }
+
+
+
 
     public void DisplayNextLine()
     {
         if (dialogueQueue.Count == 0)
         {
-            EndDialogue();
+            EndDialogue(gameObject.GetComponent<QuestManager>());
             return;
         }
 
-        if (dialogueQueue.Count > 0)
-        {
-            Dialogue currentDialogue = dialogueQueue.Dequeue();
-            speakerNameText.text = currentDialogue.speakerName;
-            dialogueText.text = currentDialogue.text;
-        }
+        Dialogue currentDialogue = dialogueQueue.Dequeue();
+        speakerNameText.text = currentDialogue.speakerName;
+        dialogueText.text = currentDialogue.text;
+    }
+
+    public void HandleDialogueInteraction() { 
+
+            if (!dialogueActive && playerInteraction.currentInteractable != null &&
+                playerInteraction.currentInteractable.GetComponent<Interactablity>() != null)
+            {
+                Interactablity interactable = playerInteraction.currentInteractable.GetComponent<Interactablity>();
+
+                if (interactable.interaction == Interactablity.Interaction.Dialog)
+                {
+                    QuestManager questManager = thisGameObject.GetComponent<QuestManager>();
+                    if (questManager != null)
+                    {
+                        QuestManager.QuestStage currentQuestStage = questManager.GetCurrentQuestStage();
+                        switch (currentQuestStage)
+                        {
+                            case QuestManager.QuestStage.QuestStart:
+                                StartDialogue(QuestManager.QuestStage.QuestStart, questStartDialogues);
+                                break;
+                            case QuestManager.QuestStage.QuestMiddle:
+                                StartDialogue(QuestManager.QuestStage.QuestMiddle, questMiddleDialogues);
+                                break;
+                            case QuestManager.QuestStage.QuestEnd:
+                                StartDialogue(QuestManager.QuestStage.QuestEnd, questEndDialogues);
+                                break;
+                            default:
+                                Debug.LogError("Unknown quest stage!");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError("QuestManager not found in the scene.");
+                    }
+                }
+            }
+            else if (dialogueActive)
+            {
+                DisplayNextLine();
+            }
         
     }
 
 
-    void Update()
-    {
-        if (playerInteraction.currentInteractable != null && playerInteraction.currentInteractable.GetComponent<Interactablity>() != null)
-        {
-            Interactablity interactable = playerInteraction.currentInteractable.GetComponent<Interactablity>();
-
-            if (interactable.interaction == Interactablity.Interaction.Dialog && !dialogueActive && Input.GetKeyDown(KeyCode.E))
-            {
-                dialogueQueue.Clear();
-                StartDialogue(originalDialogue);
-                dialogueActive = true;
-            }
-            else if (dialogueActive && Input.GetKeyDown(KeyCode.E))
-            {
-                DisplayNextLine();
-            }
-        }
-    }
-
-    private void EndDialogue()
+    private void EndDialogue(QuestManager questManager)
     {
         dialogueActive = false;
         speakerNameText.text = "";
         dialogueText.text = "";
+        Debug.Log("Dialogue ended");
+
+        if (questManager.GetCurrentQuestStage() == QuestManager.QuestStage.QuestStart)
+        {
+            questManager.SetCurrentQuestStage(QuestManager.QuestStage.QuestMiddle);
+        }
+
         if (playerController != null)
         {
             playerController.enabled = true;
+            Debug.Log("Player controller enabled");
         }
     }
 }

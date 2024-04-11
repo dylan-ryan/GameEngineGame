@@ -11,6 +11,8 @@ public class Interactablity : MonoBehaviour
     public TextMeshProUGUI infoText;
     public Dialogue[] dialogues;
 
+    private PlayerInteraction playerInteraction;
+
     public enum Interaction { Info, Log, Mushroom, Honey, Water, Dialog }
     [Header("Enum Stuff")]
     public Interaction interaction;
@@ -18,13 +20,8 @@ public class Interactablity : MonoBehaviour
 
     public void Start()
     {
+        playerInteraction = GameObject.Find("Player").GetComponent<PlayerInteraction>();
         infoText = GameObject.Find("InfoText").GetComponent<TextMeshProUGUI>();
-        dialogManager = FindObjectOfType<DialogManager>();
-    }
-
-    public void Update()
-    {
-
     }
 
     public void InfoText()
@@ -49,6 +46,7 @@ public class Interactablity : MonoBehaviour
     public void MushroomInteraction()
     {
         this.gameObject.SetActive(false);
+        playerInteraction.CollectMushroom();
     }
 
     public void HoneyInteraction()
@@ -61,12 +59,31 @@ public class Interactablity : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
-    public void DialogInteraction()
+    public void StartDialogueInteraction()
     {
-        PlayerInteraction playerInteraction = FindObjectOfType<PlayerInteraction>();
-        if (playerInteraction != null)
+        if (gameObject != null)
         {
-            playerInteraction.StartDialogueInteraction(dialogues);
+            DialogManager dialogManager = gameObject.GetComponent<DialogManager>();
+
+            if (dialogManager != null)
+            {
+                QuestManager questManager = gameObject.GetComponent<QuestManager>();
+
+                if (questManager != null)
+                {
+                    Dialogue[] dialogues = gameObject.GetComponent<Interactablity>().dialogues;
+                    dialogManager.HandleDialogueInteraction();
+                    dialogManager.StartDialogue(questManager.GetCurrentQuestStage(), dialogues);
+                }
+                else
+                {
+                    Debug.LogError("QuestManager component not found on the current interactable.");
+                }
+            }
+            else
+            {
+                Debug.LogError("DialogManager component not found on the current interactable.");
+            }
         }
     }
 }
