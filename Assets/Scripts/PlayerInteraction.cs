@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Interactablity;
-using static QuestManager;
 
 public class PlayerInteraction : MonoBehaviour
 {
@@ -11,15 +10,13 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField]
     private Interactablity currentInteractableScript;
 
-    private bool inDialogue = false;
     private int mushroomsCollected = 0;
 
     public GameObject mushroomQuest;
 
-    void Start()
-    {
+    public DialogManager dialogManager;
 
-    }
+
 
     void Update()
     {
@@ -48,7 +45,7 @@ public class PlayerInteraction : MonoBehaviour
                     Debug.Log("Water");
                     break;
                 case Interaction.Dialog:
-                    currentInteractableScript.StartDialogueInteraction();
+                    currentInteractableScript.dialogManager.StartDialogue();
                     break;
             }
         }
@@ -61,6 +58,7 @@ public class PlayerInteraction : MonoBehaviour
         {
             currentInteractable = other.gameObject;
             currentInteractableScript = currentInteractable.GetComponent<Interactablity>();
+            dialogManager = currentInteractable.GetComponent<DialogManager>();
         }
     }
     public void CollectMushroom()
@@ -68,10 +66,10 @@ public class PlayerInteraction : MonoBehaviour
         mushroomsCollected++;
         if (mushroomsCollected >= 2)
         {
-            QuestManager questManager = mushroomQuest.GetComponent<QuestManager>();
+            DialogManager questManager = mushroomQuest.GetComponent<DialogManager>();
             if (questManager != null)
             {
-                questManager.SetCurrentQuestStage(QuestManager.QuestStage.QuestEnd);
+                questManager.currentQuestStage = DialogManager.QuestStage.QuestEnd;
             }
             else
             {

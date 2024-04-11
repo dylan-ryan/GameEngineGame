@@ -9,7 +9,7 @@ public class Interactablity : MonoBehaviour
     [Header("Text Stuff")]
     public string message;
     public TextMeshProUGUI infoText;
-    public Dialogue[] dialogues;
+    //public Dialogue[] dialogues;
 
     private PlayerInteraction playerInteraction;
 
@@ -61,29 +61,15 @@ public class Interactablity : MonoBehaviour
 
     public void StartDialogueInteraction()
     {
-        if (gameObject != null)
+        if (dialogManager != null)
         {
-            DialogManager dialogManager = gameObject.GetComponent<DialogManager>();
-
-            if (dialogManager != null)
-            {
-                QuestManager questManager = gameObject.GetComponent<QuestManager>();
-
-                if (questManager != null)
-                {
-                    Dialogue[] dialogues = gameObject.GetComponent<Interactablity>().dialogues;
-                    dialogManager.HandleDialogueInteraction();
-                    dialogManager.StartDialogue(questManager.GetCurrentQuestStage(), dialogues);
-                }
-                else
-                {
-                    Debug.LogError("QuestManager component not found on the current interactable.");
-                }
-            }
-            else
-            {
-                Debug.LogError("DialogManager component not found on the current interactable.");
-            }
+            playerInteraction.currentInteractable.GetComponent<Collider2D>().enabled = false;
+            dialogManager.StartDialogue();
+        }
+        else
+        {
+            Debug.LogError("DialogManager reference not set in PlayerInteraction script.");
         }
     }
 }
+
