@@ -54,4 +54,9 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
+
+    public void ButtonQuit()
+    {
+        Application.Quit();
+    }
 }
