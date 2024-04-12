@@ -9,6 +9,7 @@ public class DialogManager : MonoBehaviour
     {
         QuestStart,
         QuestMiddle,
+        QuestEndDialogue,
         QuestEnd
     }
 
@@ -24,6 +25,22 @@ public class DialogManager : MonoBehaviour
     public Dialogue[] questEndDialogues;
 
     private PlayerInteraction playerInteraction;
+
+    private void Update()
+    {
+        if (dialogueActive == true)
+        {
+            GameObject.Find("Player").GetComponent<PlayerMovement_2D>().enabled = false;
+            GameObject.Find("Player").GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
+
+        }
+        if (dialogueActive == false)
+        {
+            GameObject.Find("Player").GetComponent<PlayerMovement_2D>().enabled = true;
+            GameObject.Find("Player").GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+            GameObject.Find("Player").GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
+    }
 
     private void Start()
     {
@@ -60,6 +77,8 @@ public class DialogManager : MonoBehaviour
                 return questStartDialogues;
             case QuestStage.QuestMiddle:
                 return questMiddleDialogues;
+            case QuestStage.QuestEndDialogue:
+                return questEndDialogues;
             case QuestStage.QuestEnd:
                 return questEndDialogues;
             default:
@@ -82,16 +101,16 @@ public class DialogManager : MonoBehaviour
             }
             yield return null;
         }
-
-        if (dialogueQueue.Count == 0)
-        {
-            gameObject.GetComponent<Collider2D>().enabled = true;
-            EndDialogue();
-        }
+        EndDialogue();
     }
-
+            
     private void DisplayNextLine()
     {
+        if (dialogueQueue.Count == 0)
+        {
+            EndDialogue();
+            return;
+        }
         Dialogue currentDialogue = dialogueQueue.Dequeue();
         speakerNameText.text = currentDialogue.speakerName;
         dialogueText.text = currentDialogue.text;
@@ -103,6 +122,11 @@ public class DialogManager : MonoBehaviour
         {
             currentQuestStage = QuestStage.QuestMiddle;
         }
+        else if (currentQuestStage == QuestStage.QuestEndDialogue && dialogueQueue.Count == 0)
+        {
+            currentQuestStage = QuestStage.QuestEnd;
+            playerInteraction.guardCollected++;
+        }
         else if (currentQuestStage == QuestStage.QuestEnd)
         {
             Debug.Log("Quest Done");
@@ -111,9 +135,12 @@ public class DialogManager : MonoBehaviour
         {
             Debug.LogWarning("Unknown quest stage or already at the end.");
         }
+
         dialogueActive = false;
         speakerNameText.text = "";
         dialogueText.text = "";
         Debug.Log("Dialogue ended");
+        gameObject.GetComponent<Collider2D>().enabled = true;
     }
+
 }

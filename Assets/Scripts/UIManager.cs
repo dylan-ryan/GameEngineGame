@@ -8,8 +8,6 @@ public class UIManager : MonoBehaviour
     public GameObject pause;
     public GameObject gameplay;
     public GameObject gameWin;
-    public GameObject gameOver;
-    public GameObject options;
     public void ManagerMainMenuUI()
     {
         Cursor.visible = true;
@@ -18,8 +16,6 @@ public class UIManager : MonoBehaviour
         pause.SetActive(false);
         gameplay.SetActive(false);
         gameWin.SetActive(false);
-        gameOver.SetActive(false);
-        options.SetActive(false);
     }
 
     public void ManagerPauseUI()
@@ -30,8 +26,6 @@ public class UIManager : MonoBehaviour
         pause.SetActive(true);
         gameplay.SetActive(false);
         gameWin.SetActive(false);
-        gameOver.SetActive(false);
-        options.SetActive(false);
         Time.timeScale = 0f;
     }
 
@@ -43,8 +37,6 @@ public class UIManager : MonoBehaviour
         pause.SetActive(false);
         gameplay.SetActive(true);
         gameWin.SetActive(false);
-        gameOver.SetActive(false);
-        options.SetActive(false);
         Time.timeScale = 1f;
     }
     public void ManagerGameWinUI()
@@ -55,8 +47,6 @@ public class UIManager : MonoBehaviour
         pause.SetActive(false);
         gameplay.SetActive(false);
         gameWin.SetActive(true);
-        gameOver.SetActive(false);
-        options.SetActive(false);
     }
 
     public void ManagerGameOverUI()
@@ -67,8 +57,6 @@ public class UIManager : MonoBehaviour
         pause.SetActive(false);
         gameplay.SetActive(false);
         gameWin.SetActive(false);
-        gameOver.SetActive(true);
-        options.SetActive(false);
     }
 
     public void ManagerOptionsUI()
@@ -79,8 +67,6 @@ public class UIManager : MonoBehaviour
         pause.SetActive(false);
         gameplay.SetActive(false);
         gameWin.SetActive(false);
-        gameOver.SetActive(false);
-        options.SetActive(true);
         Time.timeScale = 0f;
     }
 }

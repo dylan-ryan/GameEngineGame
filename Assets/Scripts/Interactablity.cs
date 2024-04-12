@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class Interactablity : MonoBehaviour
 {
@@ -10,15 +11,17 @@ public class Interactablity : MonoBehaviour
     public string message;
     public TextMeshProUGUI infoText;
 
-    private PlayerInteraction playerInteraction;
+    public PlayerInteraction playerInteraction;
 
-    public enum Interaction { Info, Log, Mushroom, Honey, Water, Dialog }
+    public enum Interaction { Info, Log, Mushroom, Honey, Water, Guard, Dialog, Crown, Inside, Throne }
     [Header("Enum Stuff")]
     public Interaction interaction;
     public DialogManager dialogManager;
+    private GameManager gameManager;
 
     public void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         playerInteraction = GameObject.Find("Player").GetComponent<PlayerInteraction>();
         infoText = GameObject.Find("InfoText").GetComponent<TextMeshProUGUI>();
     }
@@ -40,6 +43,7 @@ public class Interactablity : MonoBehaviour
     public void LogInteraction()
     {
         this.gameObject.SetActive(false);
+        playerInteraction.CollectLog();
     }
 
     public void MushroomInteraction()
@@ -51,11 +55,28 @@ public class Interactablity : MonoBehaviour
     public void HoneyInteraction()
     {
         this.gameObject.SetActive(false);
+        playerInteraction.CollectHoney();
     }
 
     public void WaterInteraction()
     {
         this.gameObject.SetActive(false);
+        playerInteraction.CollectWater();
+    }
+
+    public void GuardInteraction()
+    {
+        if(playerInteraction.guardCollected >= 4)
+        {
+            this.gameObject.SetActive(false);
+            playerInteraction.CollectGuard();
+        }
+    }
+
+    public void CrownInteraction()
+    {
+        this.gameObject.SetActive(false);
+        playerInteraction.CollectCrown();
     }
 
     public void StartDialogueInteraction()
@@ -69,6 +90,17 @@ public class Interactablity : MonoBehaviour
         {
             Debug.LogError("DialogManager reference not set in PlayerInteraction script.");
         }
+    }
+
+    public void InsideInteraction()
+    {
+        SceneManager.LoadScene("Inside");
+    }
+
+    public void ThroneInteraction()
+    {
+        SceneManager.LoadScene("GameOver");
+        gameManager.gameState = GameManager.GameState.GameWin;
     }
 }
 
